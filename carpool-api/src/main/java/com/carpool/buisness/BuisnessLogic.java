@@ -25,7 +25,7 @@ public class BuisnessLogic {
 			URL url = new URL("https://maps.googleapis.com/maps/api/distancematrix/json?"
 					+ "origins=" + from 
 					+ "&destinations="+to
-					+ "&key=AIzaSyDfPVS6v3zMZcNEAAIwsfuMVWNgZcykKA4");
+					+ "&key=your api key");
 			HttpURLConnection conn;
 			
 				conn = (HttpURLConnection) url.openConnection();
