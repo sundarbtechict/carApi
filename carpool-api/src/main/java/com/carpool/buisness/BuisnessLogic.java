@@ -6,6 +6,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.sql.Timestamp;
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -25,7 +28,7 @@ public class BuisnessLogic {
 			URL url = new URL("https://maps.googleapis.com/maps/api/distancematrix/json?"
 					+ "origins=" + from 
 					+ "&destinations="+to
-					+ "&key=AIzaSyDfPVS6v3zMZcNEAAIwsfuMVWNgZcykKA4");
+					+ "&key=AIzaSyAAUI-JrA5a9-oL9f4uFiTjTbx23x-6gCQ");
 			HttpURLConnection conn;
 			
 				conn = (HttpURLConnection) url.openConnection();
@@ -63,8 +66,8 @@ public class BuisnessLogic {
 			     }
 			     else
 			     {
-			    	 System.out.println(0);
-			    	 throw new Exception("Error in API KEY");
+			    	 System.out.println(array);
+			    	 throw new Exception("Error in API KEY"+from+" ; jj"+to);
 			     }
 			
 			} catch (ParseException e) {
@@ -78,6 +81,32 @@ public class BuisnessLogic {
 		return map;
 		}
 
+	public static boolean checkSameDistance(String from,String to, String waypoints, double distance) {
+		
+		Map<String, Object> map1=BuisnessLogic.findDistance(from, waypoints);
+		Map<String, Object> map2=BuisnessLogic.findDistance(waypoints, to);
+		double distance1=(double) map1.get("distance");
+		double distance2=(double) map2.get("distance");
+		double total=distance1+distance2;
+		System.out.println(Math.round(total)+" total="+total);
+		System.out.println(Math.round(distance)+" driverDistance="+distance);
+		if(Math.round(total)==Math.round(distance))
+			return true;
+		else
+			return false;
+	}
 	
+	public static Timestamp getDateAndTime(String date_time) throws Exception
+	{
+		System.out.println("in "+date_time);
+		 SimpleDateFormat formatter1 = new SimpleDateFormat("MM/dd/yy hh:mm:ss");  
+		 Date date = formatter1.parse(date_time);  
+		 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-M-dd hh:mm:ss");
+		 String strDate = formatter.format(date);
+		 //System.out.println("Date Format with yyyy-M-dd hh:mm:ss : "+strDate);
+		 Timestamp timestamp = Timestamp.valueOf(strDate) ;
+		 System.out.println("Date "+timestamp);
+		return timestamp;		
+	}
 
 }

@@ -1,5 +1,8 @@
 package com.carpool.service;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,16 +30,18 @@ public class RiderService {
 		repository.save(r);
 	}
 	
-	public void insertRiderSchedule(int id, String from, String to)
+	public void insertRiderSchedule(int id, String from, String to, String date_time) throws Exception
 	{
+		Timestamp timestamp= BuisnessLogic.getDateAndTime(date_time);
 		Map<String, Object> map=BuisnessLogic.findDistance(from, to);
-		repository.insertRiderSchedule(id, (long)map.get("duration"), from, to, (double)map.get("distance"));
+		repository.insertRiderSchedule(id, (long)map.get("duration"), from, to, (double)map.get("distance"), timestamp);
 	}
 	
-	public void insertDriverSchedule(int id, String from, String to, int seats)
+	public void insertDriverSchedule(int id, String from, String to, int seats, String date_time) throws Exception
 	{
+		Timestamp timestamp= BuisnessLogic.getDateAndTime(date_time);
 		Map<String, Object> map=BuisnessLogic.findDistance(from, to);
-		repository.insertDriverSchedule(id, (long)map.get("duration"), from, to, (double)map.get("distance"), seats);
+		repository.insertDriverSchedule(id, (long)map.get("duration"), from, to, (double)map.get("distance"), seats, timestamp);
 	}
 
 	public Rider getWithMobileAndEmail(String mobile, String email)
@@ -44,8 +49,29 @@ public class RiderService {
 		return repository.getByEmailAndMobile(email, mobile);
 	}
 	
-	public List<Map<String, Object>> getRiderScheduleByTimeAndDestination(int id)
+	public List<Map<String, Object>> getRiderSchedule(int id)
 	{
-		return repository.getRiderScheduleByTimeAndDestination(id);
+		List<Map<String, Object>> list= repository.getRiderScheduleByTimeAndDestination(id);
+		List<Map<String, Object>> list2=new ArrayList<Map<String, Object>>();
+		for(Map<String, Object> map: list ) {
+			System.out.println((String)map.get("from")+(String)map.get("to")+(String)map.get("waypoints")+
+					(double)map.get("distance"));
+			if(BuisnessLogic.checkSameDistance(
+					(String)map.get("from"),
+					(String)map.get("to"),
+					(String)map.get("waypoints"),
+					(double)map.get("distance")))
+			{
+				System.out.println("hi da");
+				Optional<Rider> optional=repository.findById((int)map.get("driverscheduleID"));
+				Rider rider=optional.get();
+				Map<String, Object> map2=new HashMap<String, Object>();
+				map2.put("name",rider.getFirstName());
+				map2.put("id",rider.getId());
+				map2.put("mobile",rider.getPhone());
+				list2.add(map2);
+			}
+		}
+		return list2;
 	}
 }	

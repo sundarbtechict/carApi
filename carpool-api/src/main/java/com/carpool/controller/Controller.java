@@ -48,7 +48,12 @@ public class Controller {
 		int id=(int) map.get("id");
 		String from=(String) map.get("from");
 		String to=(String) map.get("to");
-		service.insertRiderSchedule(id, from, to);
+		String date_time=(String)map.get("date_time");
+		try {
+			service.insertRiderSchedule(id, from, to, date_time);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@RequestMapping(method=RequestMethod.POST , value="/driverSchedule")
@@ -58,12 +63,17 @@ public class Controller {
 		String from=(String) map.get("from");
 		String to=(String) map.get("to");
 		int seats= Integer.parseInt( (String) map.get("seats"));
-		service.insertDriverSchedule(id, from, to, seats);
+		String date_time=(String)map.get("date_time");
+		try {
+			service.insertDriverSchedule(id, from, to, seats, date_time);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@RequestMapping("/getRiderSchedule/{id}")
 	public List<Map<String, Object>> getSchedule(@PathVariable int id)
 	{
-		return service.getRiderScheduleByTimeAndDestination(id);
+		return service.getRiderSchedule(id);
 	}
 }
