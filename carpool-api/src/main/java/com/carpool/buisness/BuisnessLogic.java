@@ -55,7 +55,13 @@ public class BuisnessLogic {
 				     JSONObject jsonObject2=(JSONObject)jsonObject.get("duration");
 				     jsonObject=(JSONObject)jsonObject.get("distance");
 				     String km=(String) jsonObject.get("text");
-				     double distance = Double.parseDouble(km.replace("km", ""));
+				     double distance = 0;
+				     if(km.contains("km"))
+				    	 distance= Double.parseDouble(km.replace("km", ""));
+				     else if(km.contains("m")) {
+				    	 distance= Double.parseDouble(km.replace("m", ""));
+				    	 distance=distance/1000;
+				     }
 				     System.out.println(distance);
 				     long time=(long) jsonObject2.get("value");
 				     System.out.println(time);
@@ -67,7 +73,7 @@ public class BuisnessLogic {
 			     else
 			     {
 			    	 System.out.println(array);
-			    	 throw new Exception("Error in API KEY"+from+" ; jj"+to);
+			    	 throw new Exception("Error in API KEY");
 			     }
 			
 			} catch (ParseException e) {
@@ -81,16 +87,19 @@ public class BuisnessLogic {
 		return map;
 		}
 
-	public static boolean checkSameDistance(String from,String to, String waypoints, double distance) {
+	public static boolean checkSameDistance(String from,String to, 
+			String waypoint1, String waypoint2, double distance) {
 		
-		Map<String, Object> map1=BuisnessLogic.findDistance(from, waypoints);
-		Map<String, Object> map2=BuisnessLogic.findDistance(waypoints, to);
+		Map<String, Object> map1=BuisnessLogic.findDistance(from, waypoint1);
+		Map<String, Object> map2=BuisnessLogic.findDistance(waypoint1, waypoint2);
+		Map<String, Object> map3=BuisnessLogic.findDistance(waypoint2, to);
 		double distance1=(double) map1.get("distance");
 		double distance2=(double) map2.get("distance");
-		double total=distance1+distance2;
-		System.out.println(Math.round(total)+" total="+total);
-		System.out.println(Math.round(distance)+" driverDistance="+distance);
-		if(Math.round(total)==Math.round(distance))
+		double distance3=(double) map3.get("distance");
+		double total=distance1+distance2+distance3;
+		System.out.println(" total="+total);
+		System.out.println(" driverDistance="+(distance+1));
+		if(total<(distance+1))
 			return true;
 		else
 			return false;
