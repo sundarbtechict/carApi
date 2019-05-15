@@ -64,14 +64,19 @@ public interface RiderRepository extends CrudRepository<User , Integer> ,JpaRepo
 	@Transactional
 	public List<Map<String,Object>> getRiderScheduleByRideProvider(@Param("id") int id);
 	
+	@Query(value="SELECT * FROM riderschedule WHERE rideProvider=:id AND confirmed = true ORDER BY distance DESC", nativeQuery = true)
+	@Transactional
+	public List<Map<String,Object>> getRiderScheduleByConfirmed(@Param("id") int id);
+	
 	@Modifying
 	@Query(value="UPDATE riderschedule SET rideProvider=:driverScheduleId WHERE riderScheduleID=:riderScheduleId ", nativeQuery = true)
 	@Transactional
 	void updateRideProvider(@Param("driverScheduleId") int driverScheduleId, @Param("riderScheduleId") int riderScheduleId);
 	
 	@Modifying
-	@Query(value="UPDATE riderschedule SET confirmed=true WHERE riderScheduleID=:riderScheduleId ", nativeQuery = true)
+	@Query(value="UPDATE riderschedule, driverschedule SET riderschedule.confirmed = true, driverschedule.seats_left = driverschedule.seats_left-1"  
+			+ " WHERE riderschedule.riderScheduleID=:riderScheduleId AND driverschedule.driverScheduleID=:driverScheduleId", nativeQuery = true)
 	@Transactional
-	void updateConfirmed(@Param("riderScheduleId") int riderScheduleId);
+	void updateConfirmed(@Param("riderScheduleId") int riderScheduleId, @Param("driverScheduleId") int driverScheduleId);
 	
 }

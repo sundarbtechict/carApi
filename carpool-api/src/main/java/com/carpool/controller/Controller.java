@@ -88,6 +88,11 @@ public class Controller {
 		return service.getRiderScheduleByRideProvider(id);
 	}
 	
+	@RequestMapping("/getRiderConfirmedSchedule/{id}")
+	public List<Map<String, Object>> getRiderScheduleByConfirmed(@PathVariable int id){
+		return service.getRiderScheduleByConfirmed(id);
+	}
+	
 	@RequestMapping("/getRiderSchedules/{id}")
 	public List<Map<String, Object>> getRiderSchedules(@PathVariable int id)
 	{
@@ -95,7 +100,7 @@ public class Controller {
 	}
 	
 	@RequestMapping("/getDriverSchedules/{id}")
-	public List<Map<String, Object>> getDriverSchedules(@PathVariable int id)
+	public List<Map<String, Object>> getDriverSchedules(@PathVariable int id) throws Exception
 	{
 		return service.getDriverSchedules(id);
 	}
@@ -110,10 +115,10 @@ public class Controller {
 	}
 	
 	@RequestMapping(method=RequestMethod.PUT , value="/updateConfirmed")
-	public void updateConfirmed(@RequestBody Map<String ,Object> id)
+	public void updateConfirmed(@RequestBody Map<String ,Object> ids)
 	{
-		System.out.println("hi");
-		int riderScheduleId= (int)id.get("riderScheduleId");
-		 service.updateConfirmed(riderScheduleId);
+		int driverScheduleId= (int)ids.get("driverScheduleId");
+		int riderScheduleId= (int)ids.get("riderScheduleId");
+		 service.updateConfirmed(riderScheduleId,driverScheduleId);
 	}
 }

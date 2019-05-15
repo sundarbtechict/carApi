@@ -95,6 +95,21 @@ public class RiderService {
 		return list2;
 	}
 	
+	public List<Map<String, Object>> getRiderScheduleByConfirmed(int id){
+		List<Map<String, Object>> list1= repository.getRiderScheduleByConfirmed(id);
+		List<Map<String, Object>> list2=new ArrayList<Map<String, Object>>();
+		for(Map<String, Object> map: list1 ) {
+			Optional<User> optional=repository.findById((int)map.get("userID"));
+			User rider=optional.get();
+			Map<String, Object> map2=new HashMap<String, Object>();
+			map2.putAll(map);
+			map2.put("name",rider.getFirstName());
+			map2.put("mobile",rider.getPhone());
+			list2.add(map2);
+		}
+		return list2;
+	}
+	
 	public List<Map<String, Object>> getRiderSchedules(int id){
 		List<Map<String, Object>> list= repository.getRiderScheduleID(id);
 		List<Map<String, Object>> list2=new ArrayList<Map<String, Object>>();
@@ -103,13 +118,15 @@ public class RiderService {
 			Map<String, Object> map2=new HashMap<String, Object>();
 			map2.putAll(map);
 			map2.put("dateTime", s);
+			String status=BuisnessLogic.getRiderStatus((int) map.get("rideProvider"), (boolean) map.get("confirmed"));
+			map2.put("status", status);
 			list2.add(map2);
 		}
 		return list2;
 		
 	}
 	
-	public List<Map<String, Object>> getDriverSchedules(int id){
+	public List<Map<String, Object>> getDriverSchedules(int id) throws Exception{
 		List<Map<String, Object>> list= repository.getDriverScheduleID(id);
 		List<Map<String, Object>> list2=new ArrayList<Map<String, Object>>();
 		for(Map<String, Object> map: list ) {
@@ -117,6 +134,8 @@ public class RiderService {
 			Map<String, Object> map2=new HashMap<String, Object>();
 			map2.putAll(map);
 			map2.put("dateTime", s);
+			String status=BuisnessLogic.getdriverStatus(s);
+			map2.put("status", status);
 			list2.add(map2);
 		}
 		return list2;
@@ -127,7 +146,7 @@ public class RiderService {
 		repository.updateRideProvider(driverScheduleId, riderScheduleId);
 	}
 	
-	public void updateConfirmed(int riderScheduleId) {
-		repository.updateConfirmed(riderScheduleId);
+	public void updateConfirmed(int riderScheduleId, int driverScheduleId) {
+		repository.updateConfirmed(riderScheduleId,driverScheduleId);
 	}
 }	

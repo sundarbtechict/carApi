@@ -98,9 +98,11 @@ public class BuisnessLogic {
 		double distance3=(double) map3.get("distance");
 		double total=distance1+distance2+distance3;
 		System.out.println(" total="+total);
-		System.out.println(" driverDistance="+(distance+1));
-		if(total<(distance+1))
+		System.out.println(" driverDistance="+(distance+8));
+		if(total<(distance+8)) {
 			return true;
+			
+		}
 		else
 			return false;
 	}
@@ -108,14 +110,47 @@ public class BuisnessLogic {
 	public static Timestamp getDateAndTime(String date_time) throws Exception
 	{
 		System.out.println("in "+date_time);
-		 SimpleDateFormat formatter1 = new SimpleDateFormat("MM/dd/yy hh:mm:ss");  
+		 SimpleDateFormat formatter1 = new SimpleDateFormat("MM/dd/yy HH:mm:ss");  
 		 Date date = formatter1.parse(date_time);  
-		 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-M-dd hh:mm:ss");
+		 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-M-dd HH:mm:ss");
 		 String strDate = formatter.format(date);
 		 //System.out.println("Date Format with yyyy-M-dd hh:mm:ss : "+strDate);
 		 Timestamp timestamp = Timestamp.valueOf(strDate) ;
 		 System.out.println("Date "+timestamp);
 		return timestamp;		
+	}
+	
+	public static String getRiderStatus(int rideProvider, boolean confirmed) 
+	{
+		String status="";
+		if(rideProvider==0)
+			status="Request Not Initiated";
+		else if(rideProvider!=0 && confirmed==false)
+			status="Request Initiated";
+		else if(confirmed==true)
+			status="Request Accepted";
+		return status;
+	}
+	
+	public static String getdriverStatus(String ride) throws Exception
+	{
+		String status="";
+		SimpleDateFormat sdfo= new SimpleDateFormat("yyyy-M-dd HH:mm:ss"); 
+		Date d1 = sdfo.parse(ride);
+		Date d2=new Date(); 
+		final long HOUR = 3600*1000;
+		d1 = new Date(d1.getTime() + 2* HOUR);
+		System.out.println("ride : " + sdfo.format(d1)); 
+		System.out.println("current date : " + sdfo.format(d2)); 
+		if (d1.compareTo(d2) > 0) 
+			status="Not Completed"; 
+		else if (d1.compareTo(d2) < 0) 
+			status="Completed"; 
+		else if (d1.compareTo(d2) == 0) { 
+			status="Not Completed"; 
+		} 
+		System.out.println(status);
+		return status;
 	}
 
 }
